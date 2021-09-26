@@ -15,9 +15,9 @@ namespace Api.Services
             { "LogToFile", new LogFile() },
             { "LogToDb", new LogDb() }
         };
-
-        private readonly ILogStoreLocation location;
+        
         private readonly LogStoreLocationOptions _options;
+        private readonly ILogStoreLocation location;
 
         public LogStoreService(IOptions<LogStoreLocationOptions> options)
         {
@@ -40,14 +40,14 @@ namespace Api.Services
             return true;
         }
 
-        public LogRequest All()
+        public LogResponseDtoArray All()
         {
             var readableLocation = location as IReadableLogLocation;
 
             return readableLocation.All();
         }
 
-        public bool Exists(string key)
+        public bool Exists(int key)
         {
             var readableLocation = location as IReadableLogLocation;
 
@@ -57,7 +57,7 @@ namespace Api.Services
             return true;
         }
 
-        public LogDto Get(string key)
+        public LogResponseDto Get(int key)
         {
             var readableLocation = location as IReadableLogLocation;
 
