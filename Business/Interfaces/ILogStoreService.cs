@@ -4,14 +4,14 @@ namespace Business.Interfaces
 {
     public interface ILogStoreService
     {
-        public void Create(LogRequest request);
+        public void Create(LogDtoArray request);
 
         public bool LocationIsReadable();
 
-        public LogRequest All();
+        public LogDtoArray All();
 
-        public bool Exists(string key);
+        public bool Exists(int key);
 
-        public LogDto Get(string key);
+        public LogDto Get(int key);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Business.Dto
 {
-    public class LogRequest
+    public class LogDtoArray
     {
         public LogDto[] Events { get; set; }
     }
