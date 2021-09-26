@@ -11,10 +11,10 @@ namespace Api.Services
     {
         private readonly Dictionary<string, ILogStoreLocation> locations = new Dictionary<string, ILogStoreLocation>
         {
-            { "LogToConsole", new LogConsole() },
-            { "LogToEmail", new LogEmail() },
-            { "LogToFile", new LogFile() },
-            { "LogToDb", new LogDb() }
+            { "LogToConsole", new LogToConsole() },
+            { "LogToEmail", new LogToEmail() },
+            { "LogToFile", new LogToFile() },
+            { "LogToDb", new LogToDb() }
         };
         
         private readonly LogStoreLocationOptions _options;
@@ -26,7 +26,7 @@ namespace Api.Services
             location = locations[_options.LogDestination];
         }
 
-        public void Create(LogRequest request)
+        public void Create(LogDtoArray request)
         {
             location.Create(request);
         }
@@ -41,7 +41,7 @@ namespace Api.Services
             return true;
         }
 
-        public LogRequest All()
+        public LogDtoArray All()
         {
             var readableLocation = location as IReadableLogLocation;
 
@@ -65,7 +65,7 @@ namespace Api.Services
             return DeserializeOne(readableLocation.Get(key));
         }
 
-        private LogRequest DeserializeAll(LogResponseDtoArray logs)
+        private LogDtoArray DeserializeAll(LogResponseDtoArray logs)
         {
             int count = logs.Events.Length;
             var array = new LogDto[count];
@@ -76,7 +76,7 @@ namespace Api.Services
                 array[i] = DeserializeOne(log);
             }
 
-            return new LogRequest() { Events = array };
+            return new LogDtoArray() { Events = array };
         }
 
         private LogDto DeserializeOne(LogResponseDto log)

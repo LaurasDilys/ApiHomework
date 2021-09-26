@@ -5,9 +5,9 @@ using System.Text.Json;
 
 namespace Api.LogLocations
 {
-    public class LogEmail : ILogStoreLocation
+    public class LogToEmail : ILogStoreLocation
     {
-        public void Create(LogRequest request)
+        public void Create(LogDtoArray request)
         {
             // Simuliuojamas Email išsiuntimas
 

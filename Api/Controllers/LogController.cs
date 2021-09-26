@@ -16,14 +16,14 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<LogRequest> Create([FromBody]LogRequest request)
+        public ActionResult<LogDtoArray> Create([FromBody]LogDtoArray request)
         {
             _logStoreService.Create(request);
             return Created(nameof(Create), request);
         }
 
         [HttpGet]
-        public ActionResult<LogRequest> All()
+        public ActionResult<LogDtoArray> All()
         {
             if (!_logStoreService.LocationIsReadable())
                 return UnprocessableEntity("Can not read from source.");

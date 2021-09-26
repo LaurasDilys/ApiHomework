@@ -10,9 +10,9 @@ using Data;
 
 namespace Api.LogLocations
 {
-    public class LogDb : ILogStoreLocation, IReadableLogLocation
+    public class LogToDb : ILogStoreLocation, IReadableLogLocation
     {
-        public void Create(LogRequest request)
+        public void Create(LogDtoArray request)
         {
             using (var db = new LogContext())
             {

@@ -8,18 +8,18 @@ using System.Text.Json;
 
 namespace Api.LogLocations
 {
-    public class LogFile : ILogStoreLocation, IReadableLogLocation
+    public class LogToFile : ILogStoreLocation, IReadableLogLocation
     {
         private string path { get; set; }
 
-        public LogFile()
+        public LogToFile()
         {
             path = @"LOGS.txt";
             if (!File.Exists(path))
                 using (StreamWriter sw = File.CreateText(path)) { }
         }
 
-        public void Create(LogRequest request)
+        public void Create(LogDtoArray request)
         {
             foreach (var log in request.Events)
                 AddLog(From(log));
