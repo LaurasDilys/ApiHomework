@@ -21,8 +21,6 @@ namespace Api.Services
 
         public LogStoreService(IOptions<LogStoreLocationOptions> options)
         {
-            // Lokaciją (pvz. "LogToConsole")
-            // reikės nuskaityti nuo appsettings.json
             _options = options.Value;
             location = locations[_options.LogDestination];
         }
