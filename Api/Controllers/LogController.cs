@@ -26,7 +26,7 @@ namespace Api.Controllers
         public ActionResult<LogRequest> All()
         {
             if (!_logStoreService.LocationIsReadable())
-                return NotFound();
+                return UnprocessableEntity("Can not read from source.");
             // Unable to process request
 
             return _logStoreService.All();
@@ -36,11 +36,11 @@ namespace Api.Controllers
         public ActionResult<LogDto> Get([FromRoute]string key)
         {
             if (!_logStoreService.LocationIsReadable())
-                return NotFound();
+                return UnprocessableEntity("Can not read from source.");
             // Unable to process request
 
             if (!_logStoreService.Exists(key))
-                return NotFound();
+                return NotFound(key);
 
             return _logStoreService.Get(key);
         }
