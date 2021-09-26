@@ -11,17 +11,17 @@ namespace Api.LogLocations
             throw new NotImplementedException();
         }
 
-        public LogRequest All()
+        public LogResponseDtoArray All()
         {
             throw new NotImplementedException();
         }
 
-        public LogDto Get(string key)
+        public LogResponseDto Get(int key)
         {
             throw new NotImplementedException();
         }
 
-        public bool Exists(string key)
+        public bool Exists(int key)
         {
             throw new NotImplementedException();
         }
