@@ -1,6 +1,7 @@
 ﻿using Api.LogLocations;
 using Business.Dto;
 using Business.Interfaces;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace Api.Services
@@ -16,12 +17,14 @@ namespace Api.Services
         };
 
         private readonly ILogStoreLocation location;
+        private readonly LogStoreLocationOptions _options;
 
-        public LogStoreService()
+        public LogStoreService(IOptions<LogStoreLocationOptions> options)
         {
             // Lokaciją (pvz. "LogToConsole")
             // reikės nuskaityti nuo appsettings.json
-            location = locations["LogToConsole"];
+            _options = options.Value;
+            location = locations[_options.LogDestination];
         }
 
         public void Create(LogRequest request)

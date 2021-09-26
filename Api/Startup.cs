@@ -27,6 +27,7 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.CongigureDependencyInjection();
+            services.Configure<LogStoreLocationOptions>(Configuration.GetSection("LogStoreLocationOptions"));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
