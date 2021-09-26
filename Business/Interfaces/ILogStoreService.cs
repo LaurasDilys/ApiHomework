@@ -8,10 +8,10 @@ namespace Business.Interfaces
 
         public bool LocationIsReadable();
 
-        public LogResponseDtoArray All();
+        public LogRequest All();
 
         public bool Exists(int key);
 
-        public LogResponseDto Get(int key);
+        public LogDto Get(int key);
     }
 }

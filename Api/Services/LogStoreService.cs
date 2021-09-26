@@ -3,6 +3,7 @@ using Business.Dto;
 using Business.Interfaces;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Api.Services
 {
@@ -40,11 +41,11 @@ namespace Api.Services
             return true;
         }
 
-        public LogResponseDtoArray All()
+        public LogRequest All()
         {
             var readableLocation = location as IReadableLogLocation;
 
-            return readableLocation.All();
+            return DeserializeAll(readableLocation.All());
         }
 
         public bool Exists(int key)
@@ -57,11 +58,37 @@ namespace Api.Services
             return true;
         }
 
-        public LogResponseDto Get(int key)
+        public LogDto Get(int key)
         {
             var readableLocation = location as IReadableLogLocation;
 
-            return readableLocation.Get(key);
+            return DeserializeOne(readableLocation.Get(key));
+        }
+
+        private LogRequest DeserializeAll(LogResponseDtoArray logs)
+        {
+            int count = logs.Events.Length;
+            var array = new LogDto[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                var log = logs.Events[i];
+                array[i] = DeserializeOne(log);
+            }
+
+            return new LogRequest() { Events = array };
+        }
+
+        private LogDto DeserializeOne(LogResponseDto log)
+        {
+            return new LogDto
+            {
+                Timestamp = log.Timestamp,
+                Level = log.Level,
+                MessageTemplate = log.MessageTemplate,
+                RenderedMessage = log.RenderedMessage,
+                Properties = JsonSerializer.Deserialize<object>(log.Properties)
+            };
         }
     }
 }

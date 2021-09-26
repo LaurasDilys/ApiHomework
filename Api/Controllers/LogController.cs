@@ -23,7 +23,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<LogResponseDtoArray> All()
+        public ActionResult<LogRequest> All()
         {
             if (!_logStoreService.LocationIsReadable())
                 return UnprocessableEntity("Can not read from source.");
@@ -32,7 +32,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{key:int}")]
-        public ActionResult<LogResponseDto> Get([FromRoute]int key)
+        public ActionResult<LogDto> Get([FromRoute]int key)
         {
             if (!_logStoreService.LocationIsReadable())
                 return UnprocessableEntity("Can not read from source.");
