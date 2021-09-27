@@ -25,5 +25,10 @@ namespace Api.LogLocations
         {
             throw new NotImplementedException();
         }
+
+        public LogResponseDto Get()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,4 +1,5 @@
 using Data;
+using Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,7 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.CongigureDependencyInjection();
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.Configure<LogStoreLocationOptions>(Configuration.GetSection("LogStoreLocationOptions"));
             services.AddEntityFrameworkSqlite().AddDbContext<LogContext>();
 
