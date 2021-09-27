@@ -1,111 +1,123 @@
 ﻿using Business.Dto;
 using Business.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 
+
 namespace Api.LogLocations
 {
     public class LogToFile : ILogStoreLocation, IReadableLogLocation
     {
-        private string path { get; set; }
+        private string Path { get; set; }
 
         public LogToFile()
         {
-            path = @"LOGS.txt";
-            if (!File.Exists(path))
-                using (StreamWriter sw = File.CreateText(path)) { }
+            Path = "Data.json";
+            if (!File.Exists(Path))
+            {
+                var newFile = File.Create(Path);
+                newFile.Close();
+            }
         }
 
         public void Create(LogDtoArray request)
         {
-            foreach (var log in request.Events)
-                AddLog(From(log));
+            WriteToFile(request);
         }
 
         public LogResponseDtoArray All()
         {
-            var logs = new List<LogResponseDto>();
-            for (int i = 1; i < NewId(); i++)
-                logs.Add(From(i));
-
+            var allData = FileDataToDataSet();
             return new LogResponseDtoArray
             {
-                Events = logs.ToArray()
+                Events = Convert(allData),
             };
         }
 
         public LogResponseDto Get(int key)
         {
-            return From(key);
+            var allData = FileDataToDataSet();
+            return GetById(key, allData);
         }
 
         public bool Exists(int key)
         {
-            return IdLines()
-                .Select(x => int.Parse(x))
-                .Any(y => y == key);
+            var allData = FileDataToDataSet();
+            return allData.Exists(a => a.ID == key);
         }
 
-        private void AddLog(List<string> text)
-        {
-            File.AppendAllLines(path, text);
-        }
-        
-        private string[] AllLines()
-        {
-            return File.ReadAllLines(path);
-        }
 
-        private string[] IdLines()
+        private void WriteToFile(LogDtoArray request)
         {
-            return AllLines()
-                .Where(s => s.All(c => Char.IsDigit(c))).ToArray();
-        }
-        
-        private int NewId()
-        {
-            var ids = IdLines();
-
-            return ids.Any() ?
-                ids.Max(x => int.Parse(x)) + 1 : 1;
-        }
-
-        private List<string> From(LogDto log)
-        {
-            return new List<string>
+            int lastId = GetLastId();
+            string jsonString = string.Empty;
+            foreach (LogDto input in request.Events)
             {
-                NewId().ToString(),
-                $"Timestamp:{log.Timestamp}",
-                $"Level:{log.Level}",
-                $"MessageTemplate:{log.MessageTemplate}",
-                $"RenderedMessage:{log.RenderedMessage}",
-                $"Properties:{JsonSerializer.Serialize(log.Properties)}"
-            };
+                var inputData = (new DataSet() { ID = ++lastId, Log = input });
+                jsonString = jsonString + JsonSerializer.Serialize(inputData, new JsonSerializerOptions() { WriteIndented = true }) + ";\n";
+            }
+            File.AppendAllText(Path, jsonString);
         }
 
-        private LogResponseDto From(int key)
+        public int GetLastId()
         {
-            var lines = AllLines();
+            return DataExists() ? FileDataToDataSet().Last().ID : 0;
+        }
 
-            int idIndex = Array.IndexOf(lines, key.ToString());
-            int nextIdIndex = Array.IndexOf(lines, (key + 1).ToString());
-            int stop = nextIdIndex == -1 ? lines.Length : nextIdIndex;
-
-            List<string> values = new List<string>();
-            for (int i = idIndex + 1; i < stop; i++)
-                values.Add(lines[i].Substring(lines[i].IndexOf(':') + 1));
-
-            return new LogResponseDto
+        public List<DataSet> FileDataToDataSet()
+        {
+            string data = File.ReadAllText(Path);
+            var records = data.Split(";");
+            List<DataSet> dataSets = new List<DataSet>();
+            foreach (string record in records)
             {
-                Timestamp = DateTime.Parse(values[0]),
-                Level = values[1],
-                MessageTemplate = values[2],
-                RenderedMessage = values[3],
-                Properties = values[4]
-            };
+                if (record != string.Empty && record != "\n")
+                {
+                    dataSets.Add(JsonSerializer.Deserialize<DataSet>(record));
+                }
+            }
+            return dataSets;
+        }
+
+        private LogResponseDto[] Convert(List<DataSet> inp)
+        {
+            List<LogResponseDto> outputLog = new List<LogResponseDto>();
+            foreach (DataSet value in inp)
+            {
+                outputLog.Add(value.LogToResponseDto());
+            }
+            return outputLog.ToArray();
+        }
+
+        private LogResponseDto GetById(int id, List<DataSet> inp)
+        {
+            return inp.Find(i => i.ID == id).LogToResponseDto();
+        }
+
+        private bool DataExists()
+        {
+            string data = File.ReadAllText(Path);
+            return data != "";
+        }
+
+        public class DataSet
+        {
+            public int ID { get; set; }
+            public LogDto Log { get; set; }
+
+            public LogResponseDto LogToResponseDto()
+            {
+                return new LogResponseDto
+                {
+                    Timestamp = Log.Timestamp,
+                    Level = Log.Level,
+                    MessageTemplate = Log.MessageTemplate,
+                    RenderedMessage = Log.RenderedMessage,
+                    Properties = JsonSerializer.Serialize(Log.Properties),
+                };
+            }
         }
     }
 }
