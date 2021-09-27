@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Models
+namespace Api.Options
 {
-    public class MailSettings
+    public class MailOptions
     {
         public string Mail { get; set; }
         public string DisplayName { get; set; }

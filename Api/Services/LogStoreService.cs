@@ -1,4 +1,5 @@
 ﻿using Api.LogLocations;
+using Api.Options;
 using Business.Dto;
 using Business.Interfaces;
 using Microsoft.Extensions.Options;
@@ -9,21 +10,27 @@ namespace Api.Services
 {
     public class LogStoreService : ILogStoreService
     {
-        private readonly Dictionary<string, ILogStoreLocation> locations = new Dictionary<string, ILogStoreLocation>
-        {
-            { "LogToConsole", new LogToConsole() },
-            { "LogToEmail", new LogToEmail() },
-            { "LogToFile", new LogToFile() },
-            { "LogToDb", new LogToDb() }
-        };
-        
-        private readonly LogStoreLocationOptions _options;
+        private readonly MailOptions _mailSettings;
+        private readonly LogStoreLocationOptions _logOptions;
+        private readonly Dictionary<string, ILogStoreLocation> locations;
         private readonly ILogStoreLocation location;
 
-        public LogStoreService(IOptions<LogStoreLocationOptions> options)
+        public LogStoreService(
+            IOptions<LogStoreLocationOptions> logOptions,
+            IOptions<MailOptions> mailSettings)
         {
-            _options = options.Value;
-            location = locations[_options.LogDestination];
+            _mailSettings = mailSettings.Value;
+            _logOptions = logOptions.Value;
+
+            locations = new Dictionary<string, ILogStoreLocation>
+            {
+                { "LogToConsole", new LogToConsole() },
+                { "LogToEmail", new LogToEmail(_mailSettings) },
+                { "LogToFile", new LogToFile() },
+                { "LogToDb", new LogToDb() }
+            };
+
+            location = locations[_logOptions.LogDestination];
         }
 
         public void Create(LogDtoArray request)
