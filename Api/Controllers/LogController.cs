@@ -1,6 +1,9 @@
-﻿using Business.Dto;
+﻿using Api.Models;
+using Api.Services;
+using Business.Dto;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
@@ -9,10 +12,12 @@ namespace Api.Controllers
     public class LogController : ControllerBase
     {
         public readonly ILogStoreService _logStoreService;
+        private readonly MailService _mailService;
 
-        public LogController(ILogStoreService logStoreService)
+        public LogController(ILogStoreService logStoreService, MailService mailService)
         {
             _logStoreService = logStoreService;
+            _mailService = mailService;
         }
 
         [HttpPost]
@@ -20,6 +25,16 @@ namespace Api.Controllers
         {
             _logStoreService.Create(request);
             return Created(nameof(Create), request);
+        }
+        [HttpPost("SendEmail")]
+        public async Task<IActionResult> Send([FromForm] MailRequest mailrequest)
+        {
+
+            await _mailService.SendEmailAsync(mailrequest);
+            return Ok();
+
+
+
         }
 
         [HttpGet]

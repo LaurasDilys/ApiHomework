@@ -8,6 +8,8 @@ namespace Api.LogLocations
         public void Create(LogRequest request)
         {
             // Tipo email this request
+
+
         }
     }
 }
