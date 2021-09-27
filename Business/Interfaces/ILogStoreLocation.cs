@@ -4,6 +4,6 @@ namespace Business.Interfaces
 {
     public interface ILogStoreLocation
     {
-        public void Create(LogRequest request);
+        public void Create(LogDtoArray request);
     }
 }

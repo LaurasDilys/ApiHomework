@@ -20,26 +20,26 @@ namespace Api.Controllers
             _mailService = mailService;
         }
 
-        [HttpPost]
-        public ActionResult<LogRequest> Create([FromBody]LogRequest request)
-        {
-            _logStoreService.Create(request);
-            return Created(nameof(Create), request);
-        }
-
         [HttpPost("SendEmail")]
         public async Task<IActionResult> Send([FromForm] MailRequest mailrequest)
         {
 
-            await _mailService.SendEmailAsync(mailrequest,_logStoreService.All());
+            await _mailService.SendEmailAsync(mailrequest, new LogResponseDtoArray());
             return Ok();
 
 
 
         }
 
+        [HttpPost]
+        public ActionResult<LogDtoArray> Create([FromBody]LogDtoArray request)
+        {
+            _logStoreService.Create(request);
+            return Created(nameof(Create), request);
+        }
+
         [HttpGet]
-        public ActionResult<LogResponseDtoArray> All()
+        public ActionResult<LogDtoArray> All()
         {
             if (!_logStoreService.LocationIsReadable())
                 return UnprocessableEntity("Can not read from source.");
@@ -48,7 +48,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{key:int}")]
-        public ActionResult<LogResponseDto> Get([FromRoute]int key)
+        public ActionResult<LogDto> Get([FromRoute]int key)
         {
             if (!_logStoreService.LocationIsReadable())
                 return UnprocessableEntity("Can not read from source.");

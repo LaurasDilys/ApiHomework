@@ -3,6 +3,7 @@ using Business.Dto;
 using Business.Interfaces;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Api.Services
 {
@@ -10,10 +11,10 @@ namespace Api.Services
     {
         private readonly Dictionary<string, ILogStoreLocation> locations = new Dictionary<string, ILogStoreLocation>
         {
-            { "LogToConsole", new LogConsole() },
-            { "LogToEmail", new LogEmail() },
-            { "LogToFile", new LogFile() },
-            { "LogToDb", new LogDb() }
+            { "LogToConsole", new LogToConsole() },
+            { "LogToEmail", new LogToEmail() },
+            { "LogToFile", new LogToFile() },
+            { "LogToDb", new LogToDb() }
         };
         
         private readonly LogStoreLocationOptions _options;
@@ -25,7 +26,7 @@ namespace Api.Services
             location = locations[_options.LogDestination];
         }
 
-        public void Create(LogRequest request)
+        public void Create(LogDtoArray request)
         {
             location.Create(request);
         }
@@ -40,11 +41,11 @@ namespace Api.Services
             return true;
         }
 
-        public LogResponseDtoArray All()
+        public LogDtoArray All()
         {
             var readableLocation = location as IReadableLogLocation;
 
-            return readableLocation.All();
+            return DeserializeAll(readableLocation.All());
         }
 
         public bool Exists(int key)
@@ -56,12 +57,38 @@ namespace Api.Services
 
             return true;
         }
-        public LogResponseDto Get(int key)
+
+        public LogDto Get(int key)
         {
             var readableLocation = location as IReadableLogLocation;
 
-            return readableLocation.Get(key);
+            return DeserializeOne(readableLocation.Get(key));
         }
-       
+
+        private LogDtoArray DeserializeAll(LogResponseDtoArray logs)
+        {
+            int count = logs.Events.Length;
+            var array = new LogDto[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                var log = logs.Events[i];
+                array[i] = DeserializeOne(log);
+            }
+
+            return new LogDtoArray() { Events = array };
+        }
+
+        private LogDto DeserializeOne(LogResponseDto log)
+        {
+            return new LogDto
+            {
+                Timestamp = log.Timestamp,
+                Level = log.Level,
+                MessageTemplate = log.MessageTemplate,
+                RenderedMessage = log.RenderedMessage,
+                Properties = JsonSerializer.Deserialize<object>(log.Properties)
+            };
+        }
     }
 }

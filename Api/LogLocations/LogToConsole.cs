@@ -5,9 +5,9 @@ using System.Text.Json;
 
 namespace Api.LogLocations
 {
-    public class LogConsole : ILogStoreLocation
+    public class LogToConsole : ILogStoreLocation
     {
-        public void Create(LogRequest request)
+        public void Create(LogDtoArray request)
         {
             foreach (var item in request.Events)
             {
