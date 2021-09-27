@@ -1,6 +1,7 @@
 ﻿using Business.Dto;
 using Business.Interfaces;
 using System;
+using System.Text.Json;
 
 namespace Api.LogLocations
 {
@@ -8,8 +9,15 @@ namespace Api.LogLocations
     {
         public void Create(LogRequest request)
         {
-            // Tipo Console.WriteLine(request.ToString());
-            // Tik paprastas .ToString() neveiks – reikės adapterio
+            foreach (var item in request.Events)
+            {
+                Console.WriteLine($"Timestamp: {item.Timestamp}");
+                Console.WriteLine($"Level: {item.Level}");
+                Console.WriteLine($"MessageTemplate: {item.MessageTemplate}");
+                Console.WriteLine($"RenderedMessage: {item.RenderedMessage}");
+                Console.WriteLine($"Properties: {JsonSerializer.Serialize(item.Properties)}");
+                Console.WriteLine();
+            }
         }
     }
 }
