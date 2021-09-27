@@ -28,14 +28,6 @@ namespace Api.Services
             email.Subject = mailRequest.Subject;
             var builder = new BodyBuilder();
 
-            // builder.HtmlBody = mailRequest.Body;
-            /* foreach (var log in logResponseDtoArray.Events)
-             {
-                 log.ToString();
-             }*/
-            // builder.HtmlBody =(logResponseDtoArray.Events).ToString();
-            
-
             builder.HtmlBody = JsonSerializer.Serialize(logResponseDto);
 
             email.Body = builder.ToMessageBody();
