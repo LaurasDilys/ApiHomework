@@ -10,22 +10,22 @@ namespace Api.Services
 {
     public class LogStoreService : ILogStoreService
     {
-        private readonly MailOptions _mailSettings;
+        private readonly MailOptions _mailOptions;
         private readonly LogStoreLocationOptions _logOptions;
         private readonly Dictionary<string, ILogStoreLocation> locations;
         private readonly ILogStoreLocation location;
 
         public LogStoreService(
             IOptions<LogStoreLocationOptions> logOptions,
-            IOptions<MailOptions> mailSettings)
+            IOptions<MailOptions> mailOptions)
         {
-            _mailSettings = mailSettings.Value;
+            _mailOptions = mailOptions.Value;
             _logOptions = logOptions.Value;
 
             locations = new Dictionary<string, ILogStoreLocation>
             {
                 { "LogToConsole", new LogToConsole() },
-                { "LogToEmail", new LogToEmail(_mailSettings) },
+                { "LogToEmail", new LogToEmail(_mailOptions) },
                 { "LogToFile", new LogToFile() },
                 { "LogToDb", new LogToDb() }
             };
