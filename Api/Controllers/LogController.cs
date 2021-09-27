@@ -26,11 +26,12 @@ namespace Api.Controllers
             _logStoreService.Create(request);
             return Created(nameof(Create), request);
         }
+
         [HttpPost("SendEmail")]
         public async Task<IActionResult> Send([FromForm] MailRequest mailrequest)
         {
 
-            await _mailService.SendEmailAsync(mailrequest);
+            await _mailService.SendEmailAsync(mailrequest,_logStoreService.All());
             return Ok();
 
 

@@ -13,5 +13,6 @@ namespace Business.Interfaces
         public bool Exists(int key);
 
         public LogResponseDto Get(int key);
+       
     }
 }

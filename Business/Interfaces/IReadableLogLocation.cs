@@ -7,5 +7,7 @@ namespace Business.Interfaces
         public LogResponseDtoArray All();
         public bool Exists(int key);
         public LogResponseDto Get(int key);
+       
+
     }
 }

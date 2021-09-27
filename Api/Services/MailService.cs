@@ -7,6 +7,8 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using Api.Models;
 using Business.Dto;
+using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace Api.Services
 {
@@ -18,7 +20,7 @@ namespace Api.Services
         {
             _mailSettings = mailSettings.Value;
         }
-        public async Task SendEmailAsync(MailRequest mailRequest)
+        public async Task SendEmailAsync(MailRequest mailRequest, LogResponseDtoArray logResponseDto)
         {
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
@@ -26,9 +28,16 @@ namespace Api.Services
             email.Subject = mailRequest.Subject;
             var builder = new BodyBuilder();
 
-             builder.HtmlBody = mailRequest.Body;
-          //  builder.HtmlBody =logDto.RenderedMessage ;
+            // builder.HtmlBody = mailRequest.Body;
+            /* foreach (var log in logResponseDtoArray.Events)
+             {
+                 log.ToString();
+             }*/
+            // builder.HtmlBody =(logResponseDtoArray.Events).ToString();
             
+
+            builder.HtmlBody = JsonSerializer.Serialize(logResponseDto);
+
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);

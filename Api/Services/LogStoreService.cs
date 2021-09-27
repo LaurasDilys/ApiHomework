@@ -56,12 +56,12 @@ namespace Api.Services
 
             return true;
         }
-
         public LogResponseDto Get(int key)
         {
             var readableLocation = location as IReadableLogLocation;
 
             return readableLocation.Get(key);
         }
+       
     }
 }
