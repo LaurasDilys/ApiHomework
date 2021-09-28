@@ -16,7 +16,10 @@ namespace Api.LogLocations
         {
             path = @"Data.txt";
             if (!File.Exists(path))
-                using (StreamWriter sw = File.CreateText(path)) { }
+            {
+                var newFile = File.Create(path);
+                newFile.Close();
+            }
         }
 
         public void Create(LogDtoArray request)
