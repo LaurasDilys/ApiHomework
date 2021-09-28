@@ -26,8 +26,9 @@ namespace Api.Services
             {
                 { "LogToConsole", new LogToConsole() },
                 { "LogToEmail", new LogToEmail(_mailOptions) },
-                { "LogToFile", new LogToFile() },
-                { "LogToDb", new LogToDb() }
+                { "LogToDb", new LogToDb() },
+                { "LogToJsonFile", new LogToJsonFile() },
+                { "LogToTxtFile", new LogToTxtFile() }
             };
 
             location = locations[_logOptions.LogDestination];

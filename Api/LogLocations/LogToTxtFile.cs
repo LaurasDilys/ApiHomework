@@ -8,15 +8,18 @@ using System.Text.Json;
 
 namespace Api.LogLocations
 {
-    public class LogToFile : ILogStoreLocation, IReadableLogLocation
+    public class LogToTxtFile : ILogStoreLocation, IReadableLogLocation
     {
         private string path { get; set; }
 
-        public LogToFile()
+        public LogToTxtFile()
         {
-            path = @"LOGS.txt";
+            path = @"Data.txt";
             if (!File.Exists(path))
-                using (StreamWriter sw = File.CreateText(path)) { }
+            {
+                var newFile = File.Create(path);
+                newFile.Close();
+            }
         }
 
         public void Create(LogDtoArray request)
@@ -53,7 +56,7 @@ namespace Api.LogLocations
         {
             File.AppendAllLines(path, text);
         }
-        
+
         private string[] AllLines()
         {
             return File.ReadAllLines(path);
@@ -64,7 +67,7 @@ namespace Api.LogLocations
             return AllLines()
                 .Where(s => s.All(c => Char.IsDigit(c))).ToArray();
         }
-        
+
         private int NewId()
         {
             var ids = IdLines();
