@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Api.Options;
 
 namespace Api
 {
@@ -25,6 +26,7 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.CongigureDependencyInjection();
+            services.Configure<MailOptions>(Configuration.GetSection("MailOptions"));
             services.Configure<LogStoreLocationOptions>(Configuration.GetSection("LogStoreLocationOptions"));
             services.AddEntityFrameworkSqlite().AddDbContext<LogContext>();
 

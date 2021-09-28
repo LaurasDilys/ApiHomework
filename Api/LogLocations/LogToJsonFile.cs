@@ -8,11 +8,11 @@ using System.Text.Json;
 
 namespace Api.LogLocations
 {
-    public class LogToFile : ILogStoreLocation, IReadableLogLocation
+    public class LogToJsonFile : ILogStoreLocation, IReadableLogLocation
     {
         private string Path { get; set; }
 
-        public LogToFile()
+        public LogToJsonFile()
         {
             Path = "Data.json";
             if (!File.Exists(Path))
