@@ -20,22 +20,18 @@ namespace Api.Controllers
             _mailService = mailService;
         }
 
+        [HttpPost("SendEmail")]
+        public async Task<IActionResult> Send([FromForm] MailRequest mailrequest)
+        {
+            await _mailService.SendEmailAsync(mailrequest,_logStoreService.All());
+            return Ok();
+        }
+
         [HttpPost]
         public ActionResult<LogRequest> Create([FromBody]LogRequest request)
         {
             _logStoreService.Create(request);
             return Created(nameof(Create), request);
-        }
-
-        [HttpPost("SendEmail")]
-        public async Task<IActionResult> Send([FromForm] MailRequest mailrequest)
-        {
-
-            await _mailService.SendEmailAsync(mailrequest,_logStoreService.All());
-            return Ok();
-
-
-
         }
 
         [HttpGet]

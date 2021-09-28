@@ -11,8 +11,6 @@ namespace Api.Services
         private readonly Dictionary<string, ILogStoreLocation> locations = new Dictionary<string, ILogStoreLocation>
         {
             { "LogToConsole", new LogConsole() },
-            { "LogToEmail", new LogEmail() },
-            { "LogToFile", new LogFile() },
             { "LogToDb", new LogDb() }
         };
         
